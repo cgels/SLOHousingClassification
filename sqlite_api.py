@@ -36,12 +36,6 @@ class SLOHouseDatabase:
         print("Records created successfully")
         connect.close()
 
-    def _select_row(self, stmt):
-        connect = sqlite3.connect(self.database)
-        c = connect.cursor()
-        result = c.execute(stmt, tuple(vals))
-        connect.close()
-        return result.fetchall()
 
     def select_row(self, stmt):
         connect = sqlite3.connect(self.database)
