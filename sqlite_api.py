@@ -7,6 +7,7 @@ class SLOHouseDatabase:
         self.database = 'slo_housing.db'
         self.insertStmt = "INSERT OR REPLACE INTO HOUSES (MLS_ID, CITY, ADDRESS, BED, BATH, LIST_PRICE, SQ_FOOTAGE, PRICE_PER_SQFT, LIST_DATE) \
           VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {})"
+        self.selectStmt = "SELECT * FROM HOUSES WHERE "
         self.hdrs = ["Bathrooms", "Bedrooms", "City", "Date", "ListPrice", "MLS", "Price/SqFt", "SqFt", "Street"]
         self.idx_map = {hdr: idx for hdr, idx in zip(self.hdrs, range(len(self.hdrs)))}
 
@@ -34,3 +35,28 @@ class SLOHouseDatabase:
         connect.commit()
         print("Records created successfully")
         connect.close()
+
+    def _select_row(self, stmt, vals):
+        connect = sqlite3.connect(self.database)
+        c = connect.cursor()
+        result = c.execute(stmt, tuple(vals))
+        connect.close()
+        return result.fetchall()
+
+    def select_row_AND(self, conditions:dict):
+        """ Conjuctivize a dictionary of conditions to use as selection criteria """
+        cond = ""
+        pairs = conditions.items()
+        base = "HOUSES."
+        vals = []
+        for i in range(len(pairs)):
+            if i < len(pairs) - 1:
+                cond += base+pairs[0] + "=?" + " AND "
+            else:
+                cond += base+pairs[0] + "=?"
+            vals.append(pairs[1])
+        fullStmt = self.selectStmt + cond
+        return self._select_row(fullStmt, vals)
+
+
+
