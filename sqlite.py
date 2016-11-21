@@ -3,7 +3,7 @@
 import sqlite3
 
 conn = sqlite3.connect('slo_housing.db')
-print "Opened database successfully";
+print("Opened database successfully");
 
 conn.execute('''CREATE TABLE HOUSES
        (ID             INTEGER    PRIMARY KEY AUTOINCREMENT,
@@ -18,10 +18,10 @@ conn.execute('''CREATE TABLE HOUSES
         NUM_PRICE_CHANGES INT     DEFAULT 0,
         ZONE           TEXT       DEFAULT NULL,
         LOT_SIZE       REAL       DEFAULT NULL,
-        LIST_DATE      DATE
+        LIST_DATE      TEXT
         );''')
 
-print "Table created successfully";
+print("Table created successfully");
 
 conn.close()
 
