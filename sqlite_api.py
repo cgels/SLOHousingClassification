@@ -36,27 +36,19 @@ class SLOHouseDatabase:
         print("Records created successfully")
         connect.close()
 
-    def _select_row(self, stmt, vals):
+    def _select_row(self, stmt):
         connect = sqlite3.connect(self.database)
         c = connect.cursor()
         result = c.execute(stmt, tuple(vals))
         connect.close()
         return result.fetchall()
 
-    def select_row_AND(self, conditions:dict):
-        """ Conjuctivize a dictionary of conditions to use as selection criteria """
-        cond = ""
-        pairs = conditions.items()
-        base = "HOUSES."
-        vals = []
-        for i in range(len(pairs)):
-            if i < len(pairs) - 1:
-                cond += base+pairs[0] + "=?" + " AND "
-            else:
-                cond += base+pairs[0] + "=?"
-            vals.append(pairs[1])
-        fullStmt = self.selectStmt + cond
-        return self._select_row(fullStmt, vals)
+    def select_row(self, stmt):
+        connect = sqlite3.connect(self.database)
+        c = connect.cursor()
+        result = c.execute(stmt)
+        connect.close()
+        return result.fetchall()
 
 
 
