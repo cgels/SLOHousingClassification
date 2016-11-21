@@ -12,11 +12,16 @@ class SLOHouseDatabase:
 
 
     def _insert_row(self, conn, row):
-        conn = sqlite3.connect(self.database)
-        conn.execute(self.insertStmt.format(row[self.idx_map['MLS']], row[self.idx_map['City']], row[self.idx_map['Street']],
-                                            row[self.idx_map['Bedrooms']], row[self.idx_map['Bathrooms']],
-                                            row[self.idx_map['ListPrice']], row[self.idx_map['SqFt']],int(row[self.idx_map['Price/SqFt']]),
-                                            row[self.idx_map['Date']]))
+        mls = row[self.idx_map['MLS']]
+        city = row[self.idx_map['City']]
+        street = row[self.idx_map['Street']]
+        bed = int(row[self.idx_map['Bedrooms']])
+        bath = int(row[self.idx_map['Bathrooms']])
+        price = int(row[self.idx_map['ListPrice']])
+        sqft = int(row[self.idx_map['SqFt']])
+        price_per = int(row[self.idx_map['Price/SqFt']])
+        date = row[self.idx_map['Date']]
+        conn.execute(self.insertStmt.format(mls, city, street, bed, bath, price, sqft, price_per, date))
 
 
     def insert_dataframe(self, df):
