@@ -57,5 +57,3 @@ def scraping(dataframe):
     dataframe.drop(dataframe[dataframe.SqFt == -1].index, inplace=True)
     dataframe.drop_duplicates(inplace=True)
     return dataframe
-
-df = scraping(df)
