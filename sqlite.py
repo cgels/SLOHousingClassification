@@ -7,7 +7,7 @@ print("Opened database successfully");
 
 conn.execute('''CREATE TABLE HOUSES
        (ID             INTEGER    PRIMARY KEY AUTOINCREMENT,
-        MLS_ID         INTEGER    NOT NULL,
+        MLS_ID         INTEGER    UNIQUE,
         CITY           TEXT       NOT NULL,
         ADDRESS        TEXT       NOT NULL,
         BED            INT        NOT NULL,

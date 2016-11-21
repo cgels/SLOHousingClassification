@@ -41,7 +41,6 @@ class SLOHouseDatabase:
         connect = sqlite3.connect(self.database)
         c = connect.cursor()
         result = c.execute(stmt)
-        connect.close()
         return result.fetchall()
 
 
