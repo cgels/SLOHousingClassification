@@ -41,8 +41,74 @@ class SLOHouseDatabase:
         connect = sqlite3.connect(self.database)
         c = connect.cursor()
         result = c.execute(stmt)
-        connect.close()
         return result.fetchall()
 
 
+class MLSDatabase:
+    def __init__(self):
+        self.database = 'slo_housing.db'
+        self.insertStmt = "INSERT OR REPLACE INTO MLS_LISTINGS (MLS_ID, SUBTYPE, AREA, YR_BUILT, LOT_SQFT, VIEW, POOL, ARB_COMISSION) \
+                  VALUES ({}, {}, {}, {}, {}, {}, {}, {})"
+        self.hdrs = ["ListingID", "SubType", "MLSArea", "YrBuilt", "AcLSqft", "ViewYN", "PoolPrivateYN", "BAC"]
+        self.idx_map = {hdr: idx for hdr, idx in zip(self.hdrs, range(len(self.hdrs)))}
 
+    def create_db(self):
+        conn = sqlite3.connect(self.database)
+        print("Opened database successfully");
+        try:
+            conn.execute('''CREATE TABLE MLS_LISTINGS
+                   (ID             INTEGER    PRIMARY KEY AUTOINCREMENT,
+                    MLS_ID         INTEGER    NOT NULL,
+                    SUBTYPE        TEXT       NOT NULL,
+                    AREA           TEXT       NOT NULL,
+                    YR_BUILT       INT        NOT NULL,
+                    LOT_SQFT       INTEGER    NOT NULL,
+                    VIEW           INT       NOT NULL,
+                    POOL           INT       NOT NULL,
+                    ARB_COMISSION  REAL       NOT NULL
+                    );''')
+        except Exception as err:
+            print("NOTICE: ", err)
+
+        print("Table created successfully");
+
+        conn.close()
+
+    def _insert_row(self, conn, row):
+        mls = int(row[self.idx_map['ListingID']])
+        subtype = self._sqlize_string(str(row[self.idx_map['SubType']]))
+        area = self._sqlize_string(str(row[self.idx_map['MLSArea']]))
+        year = int(row[self.idx_map['YrBuilt']])
+        lotsize = int(row[self.idx_map['AcLSqft']])
+        price = int(row[self.idx_map['ViewYN']])
+        sqft = int(row[self.idx_map['PoolPrivateYN']])
+        commission = float(row[self.idx_map['BAC']])
+
+        try:
+            conn.execute(self.insertStmt.format(mls, subtype, area, year, lotsize, price, sqft, commission))
+        except Exception  as err:
+            print(err)
+
+
+    def insert_dataframe(self, df):
+        connect = sqlite3.connect(self.database)
+        print("Connected to " + self.database)
+
+        for idx, row in df.iterrows():
+            self._insert_row(connect, row)
+
+        connect.commit()
+        print("Records created successfully")
+        connect.close()
+
+
+    def select_row(self, stmt):
+        connect = sqlite3.connect(self.database)
+        c = connect.cursor()
+        result = c.execute(stmt)
+        connect.close()
+        return result.fetchall()
+
+    def _sqlize_string(self, string):
+        return "'" + string + "'"
+    
