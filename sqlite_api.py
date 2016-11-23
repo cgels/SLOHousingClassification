@@ -1,5 +1,6 @@
 import sqlite3
 import datetime
+import pandas as pd
 
 class SLOHouseDatabase:
 
@@ -42,6 +43,16 @@ class SLOHouseDatabase:
         c = connect.cursor()
         result = c.execute(stmt)
         return result.fetchall()
+
+    def get_dataframe_from_query(self, queryStmt=None):
+        c = sqlite3.connect(self.database)
+        if queryStmt:
+            df = pd.read_sql(queryStmt, c)
+        else:
+            stmt = "SELECT * FROM HOUSES JOIN MLS_LISTINGS USING (MLS_ID)"
+            df =  pd.read_sql(stmt, c)
+        c.close()
+        return df
 
 
 class MLSDatabase:
@@ -111,4 +122,14 @@ class MLSDatabase:
 
     def _sqlize_string(self, string):
         return "'" + string + "'"
-    
+
+
+    def get_dataframe_from_query(self, queryStmt=None):
+        c = sqlite3.connect(self.database)
+        if queryStmt:
+            df = pd.read_sql(queryStmt, c)
+        else:
+            stmt = "SELECT * FROM HOUSES JOIN MLS_LISTINGS USING (MLS_ID)"
+            df =  pd.read_sql(stmt, c)
+        c.close()
+        return df

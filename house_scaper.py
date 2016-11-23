@@ -12,7 +12,7 @@ month_map = {key: int(val) for key, val in zip(months, range(1, 13))}
 
 
 def sqlize_string(string):
-    return "'" + string + "'"
+    return "'" + string.strip() + "'"
 
 def get_date(string):
     chunked = string.split()
